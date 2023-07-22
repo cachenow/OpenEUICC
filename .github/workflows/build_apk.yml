@@ -23,12 +23,10 @@ jobs:
     - name: Build Release APK
       run: ./gradlew assembleRelease
 
-    - name: Set up GitHub CLI
+    - name: Install GitHub CLI
       run: |
-        sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-key C99B11DEB97541F0
-        sudo apt-add-repository https://cli.github.com/packages
-        sudo apt update
-        sudo apt install gh
+        curl -sSL https://github.com/cli/cli/releases/download/v2.3.0/gh_2.3.0_linux_amd64.tar.gz | tar xz -C . --strip-components=1 gh_2.3.0_linux_amd64/gh
+        sudo mv gh /usr/local/bin/
 
     - name: Create GitHub Release
       run: |
