@@ -23,6 +23,13 @@ jobs:
     - name: Build Release APK
       run: ./gradlew assembleRelease
 
+    - name: Create Git tag
+      run: |
+        git tag "release-${{ github.sha }}"
+        git push --tags
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
     - name: Release APK
       uses: softprops/action-gh-release@v1
       with:
