@@ -1,4 +1,4 @@
-name: Build Release APK
+name: Build and Release APK
 
 on:
   workflow_dispatch:
@@ -23,8 +23,24 @@ jobs:
     - name: Build Release APK
       run: ./gradlew assembleRelease
 
-    - name: Upload APK
-      uses: actions/upload-artifact@v2
+    - name: Create GitHub Release
+      id: create_release
+      uses: gh-actions/create-release@v1
       with:
-        name: app-release
-        path: app/build/outputs/apk/release/app-release.apk
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        body: New release of the app.
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Upload APK to GitHub Release
+      uses: actions/upload-release-asset@v1
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./app/build/outputs/apk/release/app-release.apk
+        asset_name: app-release.apk
+        asset_content_type: application/vnd.android.package-archive
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
